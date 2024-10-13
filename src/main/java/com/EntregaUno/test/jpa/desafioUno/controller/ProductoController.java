@@ -25,7 +25,22 @@ public class ProductoController {
     }
 
     @PostMapping
-    public Producto saveProducto(@RequestBody Producto producto) {
+    public Producto createProducto(@RequestBody Producto producto) {
         return productoService.saveProducto(producto);
+    }
+
+    @PutMapping("/{id}")
+    public Producto updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        Producto existingProducto = productoService.getProductoById(id);
+        if (existingProducto != null) {
+            producto.setId(id);
+            return productoService.saveProducto(producto);
+        }
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProducto(@PathVariable Long id) {
+        productoService.deleteProducto(id);
     }
 }
