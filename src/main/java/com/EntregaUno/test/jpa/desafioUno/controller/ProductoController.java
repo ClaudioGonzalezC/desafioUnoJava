@@ -3,6 +3,7 @@ package com.EntregaUno.test.jpa.desafioUno.controller;
 import com.EntregaUno.test.jpa.desafioUno.model.Producto;
 import com.EntregaUno.test.jpa.desafioUno.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,5 +43,10 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     public void deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getUsers() {
+        return ResponseEntity.ok(productoService.getUsersFromExternalApi());
     }
 }
