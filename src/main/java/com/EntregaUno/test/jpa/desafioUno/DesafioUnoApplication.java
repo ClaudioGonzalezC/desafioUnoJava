@@ -5,7 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.EntregaUno.test.jpa.desafioUno.model.Producto;
+import com.EntregaUno.test.jpa.desafioUno.dto.ProductoDTO;
 import com.EntregaUno.test.jpa.desafioUno.service.ProductoService;
 
 @SpringBootApplication
@@ -22,7 +22,7 @@ public class DesafioUnoApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("Mostrando Productos:");
 
-        for (Producto p : productoService.getAllProductos()) {
+        for (ProductoDTO p : productoService.getAllProductos()) {
             System.out.println(p);
         }
     }
