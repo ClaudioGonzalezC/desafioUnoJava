@@ -24,7 +24,6 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // 1. Agregar campo de descripción en ProductoDTO y cantidad
     public List<ProductoDTO> getAllProductos() {
         return productoRepository.findAll()
                 .stream()
@@ -32,9 +31,9 @@ public class ProductoService {
                     producto.getId(), 
                     producto.getNombre(), 
                     producto.getPrecioNormal(), 
-                    producto.getPrecioOferta(), // Agregar el precio de oferta
+                    producto.getPrecioOferta(),
                     producto.getDescripcion(), 
-                    producto.getStock() // Agregar el stock como cantidad
+                    producto.getStock()
                 ))
                 .collect(Collectors.toList());
     }
@@ -46,13 +45,12 @@ public class ProductoService {
             producto.getId(), 
             producto.getNombre(), 
             producto.getPrecioNormal(), 
-            producto.getPrecioOferta(), // Agregar el precio de oferta
+            producto.getPrecioOferta(),
             producto.getDescripcion(), 
-            producto.getStock() // Agregar el stock como cantidad
+            producto.getStock()
         );
     }
 
-    // 2. Validar que el precio no sea negativo
     public ProductoDTO saveProducto(ProductoDTO productoDTO) {
         if (productoDTO.getPrecio() < 0) {
             throw new RuntimeException("El precio del producto no puede ser negativo");
@@ -60,17 +58,17 @@ public class ProductoService {
         Producto producto = new Producto();
         producto.setNombre(productoDTO.getNombre());
         producto.setPrecioNormal(productoDTO.getPrecio());
-        producto.setPrecioOferta(productoDTO.getPrecioOferta()); // Asignar el precio de oferta
+        producto.setPrecioOferta(productoDTO.getPrecioOferta());
         producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setStock(productoDTO.getCantidad()); // Asignar cantidad como stock
+        producto.setStock(productoDTO.getCantidad());
         producto = productoRepository.save(producto);
         return new ProductoDTO(
             producto.getId(), 
             producto.getNombre(), 
             producto.getPrecioNormal(), 
-            producto.getPrecioOferta(), // Agregar el precio de oferta
+            producto.getPrecioOferta(),
             producto.getDescripcion(), 
-            producto.getStock() // Agregar el stock como cantidad
+            producto.getStock()
         );
     }
 
@@ -80,7 +78,6 @@ public class ProductoService {
         productoRepository.delete(producto);
     }
 
-    // 3. Refactorizar validarStock usando Streams
     public void validarStock(List<ProductoDTO> productosDTO) {
         productosDTO.stream().forEach(productoDTO -> {
             Producto productoExistente = productoRepository.findById(productoDTO.getId())
