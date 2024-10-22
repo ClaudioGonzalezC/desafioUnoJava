@@ -24,48 +24,80 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    // 1. Agregar campo de descripción en ProductoDTO y cantidad
     public List<ProductoDTO> getAllProductos() {
         return productoRepository.findAll()
                 .stream()
-                .map(producto -> new ProductoDTO(producto.getId(), producto.getNombre(), producto.getPrecioNormal(), null))
+                .map(producto -> new ProductoDTO(
+                    producto.getId(), 
+                    producto.getNombre(), 
+                    producto.getPrecioNormal(), 
+                    producto.getPrecioOferta(), // Agregar el precio de oferta
+                    producto.getDescripcion(), 
+                    producto.getStock() // Agregar el stock como cantidad
+                ))
                 .collect(Collectors.toList());
     }
 
     public ProductoDTO getProductoById(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
-        return new ProductoDTO(producto.getId(), producto.getNombre(), producto.getPrecioNormal(), null);
+        return new ProductoDTO(
+            producto.getId(), 
+            producto.getNombre(), 
+            producto.getPrecioNormal(), 
+            producto.getPrecioOferta(), // Agregar el precio de oferta
+            producto.getDescripcion(), 
+            producto.getStock() // Agregar el stock como cantidad
+        );
     }
 
+    // 2. Validar que el precio no sea negativo
     public ProductoDTO saveProducto(ProductoDTO productoDTO) {
+        if (productoDTO.getPrecio() < 0) {
+            throw new RuntimeException("El precio del producto no puede ser negativo");
+        }
         Producto producto = new Producto();
         producto.setNombre(productoDTO.getNombre());
         producto.setPrecioNormal(productoDTO.getPrecio());
+        producto.setPrecioOferta(productoDTO.getPrecioOferta()); // Asignar el precio de oferta
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setStock(productoDTO.getCantidad()); // Asignar cantidad como stock
         producto = productoRepository.save(producto);
-        return new ProductoDTO(producto.getId(), producto.getNombre(), producto.getPrecioNormal(), null);
+        return new ProductoDTO(
+            producto.getId(), 
+            producto.getNombre(), 
+            producto.getPrecioNormal(), 
+            producto.getPrecioOferta(), // Agregar el precio de oferta
+            producto.getDescripcion(), 
+            producto.getStock() // Agregar el stock como cantidad
+        );
     }
 
     public void deleteProducto(Long id) {
-        productoRepository.deleteById(id);
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
+        productoRepository.delete(producto);
     }
 
+    // 3. Refactorizar validarStock usando Streams
     public void validarStock(List<ProductoDTO> productosDTO) {
-        for (ProductoDTO productoDTO : productosDTO) {
+        productosDTO.stream().forEach(productoDTO -> {
             Producto productoExistente = productoRepository.findById(productoDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + productoDTO.getId()));
             if (productoDTO.getCantidad() > productoExistente.getStock()) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + productoExistente.getNombre());
             }
-        }
+        });
     }
 
     public void reducirStock(List<ProductoDTO> productosDTO) {
-        for (ProductoDTO productoDTO : productosDTO) {
+        productosDTO.forEach(productoDTO -> {
             Producto productoExistente = productoRepository.findById(productoDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + productoDTO.getId()));
             productoExistente.setStock(productoExistente.getStock() - productoDTO.getCantidad());
             productoRepository.save(productoExistente);
-        }
+        });
     }
 
     public List<UserDTO> getUsersFromExternalApi() {
@@ -88,8 +120,7 @@ public class ProductoService {
 
             return users;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Error al consumir la API externa", e);
         }
     }
 }

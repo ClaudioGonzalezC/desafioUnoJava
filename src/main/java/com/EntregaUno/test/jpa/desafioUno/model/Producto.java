@@ -29,18 +29,13 @@ public class Producto {
 
     private Integer stock;
 
-    public Producto(Long id, String nombre, Double precioNormal, Integer stock) {
+    private String descripcion; // Agregar el campo de descripción
+
+    public Producto(Long id, String nombre, Double precioNormal, Integer stock, String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.precioNormal = precioNormal;
         this.stock = stock;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
+        this.descripcion = descripcion; // Inicializar el campo de descripción en el constructor
     }
 }
