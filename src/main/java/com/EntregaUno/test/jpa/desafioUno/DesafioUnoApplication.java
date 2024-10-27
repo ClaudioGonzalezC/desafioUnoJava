@@ -6,13 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.EntregaUno.test.jpa.desafioUno.dto.ProductoDTO;
-import com.EntregaUno.test.jpa.desafioUno.service.ProductoService;
+import com.EntregaUno.test.jpa.desafioUno.service.ProductoServiceImpl;
 
 @SpringBootApplication
 public class DesafioUnoApplication implements CommandLineRunner {
 
     @Autowired
-    ProductoService productoService;
+    ProductoServiceImpl productoService;
 
     public static void main(String[] args) {
         SpringApplication.run(DesafioUnoApplication.class, args);
